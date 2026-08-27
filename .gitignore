@@ -1,0 +1,31 @@
+# Node & Frontend
+frontend/node_modules/
+frontend/build/
+frontend/.pnp
+frontend/.pnp.js
+frontend/coverage/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Java & Backend Maven
+library/target/
+library/.mvn/wrapper/maven-wrapper.jar
+library/*.log
+library/.classpath
+library/.project
+library/.settings/
+
+# IDE & OS
+.vscode/
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Environments & Local Data
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
