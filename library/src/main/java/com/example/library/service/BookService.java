@@ -128,6 +128,7 @@ public class BookService {
                 .count();
 
         double totalFinesCollected = borrowRepo.sumFinesCollected();
+        double pendingFinesDue = borrowRepo.sumPendingFines();
 
         return new LibraryStatsDto(
                 totalTitles,
@@ -135,7 +136,8 @@ public class BookService {
                 availableCopies,
                 activeBorrows,
                 overdueBorrows,
-                totalFinesCollected
+                totalFinesCollected,
+                pendingFinesDue
         );
     }
 }

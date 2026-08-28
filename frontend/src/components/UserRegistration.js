@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE } from '../config';
 
 function UserRegistration({ onSuccess, onCancel }) {
   const [formData, setFormData] = useState({
@@ -35,7 +36,7 @@ function UserRegistration({ onSuccess, onCancel }) {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/auth/register`,
+        `${API_BASE}/auth/register`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

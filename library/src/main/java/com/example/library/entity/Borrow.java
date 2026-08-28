@@ -20,6 +20,8 @@ public class Borrow {
     private LocalDate returnDate;
     private boolean returned;
     private double fine;
+    private boolean finePaid;
+    private LocalDate finePaidDate;
 
     // GETTERS
     public Long getId() { return id; }
@@ -29,12 +31,17 @@ public class Borrow {
     public LocalDate getReturnDate() { return returnDate; }
     public boolean isReturned() { return returned; }
     public double getFine() { return fine; }
+    public boolean isFinePaid() { return finePaid; }
+    public LocalDate getFinePaidDate() { return finePaidDate; }
 
     // SETTERS
+    public void setId(Long id) { this.id = id; }
     public void setStudent(Student student) { this.student = student; }
     public void setBook(Book book) { this.book = book; }
     public void setBorrowDate(LocalDate borrowDate) { this.borrowDate = borrowDate; }
     public void setReturnDate(LocalDate returnDate) { this.returnDate = returnDate; }
     public void setReturned(boolean returned) { this.returned = returned; }
     public void setFine(double fine) { this.fine = fine; }
+    public void setFinePaid(boolean finePaid) { this.finePaid = finePaid; }
+    public void setFinePaidDate(LocalDate finePaidDate) { this.finePaidDate = finePaidDate; }
 }

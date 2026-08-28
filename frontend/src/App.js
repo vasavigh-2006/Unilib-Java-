@@ -3,8 +3,7 @@ import Login from './components/Login';
 import AdminDashboard from './components/AdminDashboard';
 import StudentDashboard from './components/StudentDashboard';
 import Toast from './components/Toast';
-
-const API_BASE = 'http://localhost:8080';
+import { API_BASE } from './config';
 
 function App() {
   const [user, setUser] = useState(null);

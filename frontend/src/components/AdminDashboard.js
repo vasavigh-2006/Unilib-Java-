@@ -4,8 +4,7 @@ import BookForm from './BookForm';
 import UserRegistration from './UserRegistration';
 import ChangePasswordModal from './ChangePasswordModal';
 import Toast from './Toast';
-
-const API_BASE = 'http://localhost:8080';
+import { API_BASE } from '../config';
 
 function AdminDashboard({ user, onLogout }) {
   const [books, setBooks] = useState([]);
@@ -129,14 +128,34 @@ function AdminDashboard({ user, onLogout }) {
     }
   };
 
+  const handleSettleFine = async (borrowId) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE}/borrow/settle-fine/${borrowId}`, {
+        method: 'POST',
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => null);
+        throw new Error((err && err.message) || 'Failed to settle fine');
+      }
+      await fetchAllBorrows();
+      await fetchStats();
+      showToast('Fine payment cleared and recorded successfully!', 'success');
+    } catch (error) {
+      showToast(error.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const statCards = stats
     ? [
         { label: 'Total Titles', value: stats.totalTitles, color: 'bg-amber-500', icon: '📚' },
         { label: 'Total Copies', value: stats.totalCopies, color: 'bg-blue-500', icon: '📋' },
         { label: 'Available', value: stats.availableCopies, color: 'bg-emerald-500', icon: '✅' },
         { label: 'Active Loans', value: stats.activeBorrows, color: 'bg-orange-500', icon: '🔖' },
-        { label: 'Overdue', value: stats.overdueBorrows, color: 'bg-red-500', icon: '⏰' },
-        { label: 'Fines Collected', value: `₹${stats.totalFinesCollected.toFixed(0)}`, color: 'bg-purple-500', icon: '💰' },
+        { label: 'Fines Collected', value: `₹${stats.totalFinesCollected.toFixed(0)}`, color: 'bg-emerald-600', icon: '💵' },
+        { label: 'Pending Dues', value: `₹${(stats.pendingFinesDue || 0).toFixed(0)}`, color: 'bg-rose-600', icon: '⚠️' },
       ]
     : [];
 
@@ -274,24 +293,28 @@ function AdminDashboard({ user, onLogout }) {
 
         {/* Borrow Logs Tab */}
         {activeTab === 'logs' && (
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100">
-              <h2 className="text-lg font-bold text-gray-800">All Borrow History</h2>
-              <p className="text-sm text-gray-500">{allBorrows.length} total records</p>
+          <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-amber-100">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-extrabold text-gray-900 flex items-center gap-2">
+                  <span>📋</span> University Borrow & Loan History
+                </h2>
+                <p className="text-xs text-gray-500 mt-0.5">{allBorrows.length} total loan records logged</p>
+              </div>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-amber-50">
+              <table className="w-full text-left">
+                <thead className="bg-amber-50/80 border-b border-amber-200">
                   <tr>
-                    {['Student', 'Book', 'Borrow Date', 'Return Date', 'Status', 'Fine'].map((h) => (
-                      <th key={h} className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{h}</th>
+                    {['Student', 'Book Title', 'Borrow Date', 'Return Date', 'Status', 'Fine', 'Counter Fine Settlement'].map((h) => (
+                      <th key={h} className="px-4 py-3 text-xs font-bold text-amber-950 uppercase tracking-wider">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {allBorrows.length === 0 ? (
                     <tr>
-                      <td colSpan="6" className="text-center text-gray-400 py-10">No borrow records found</td>
+                      <td colSpan="7" className="text-center text-gray-400 py-10 text-sm">No borrow records found</td>
                     </tr>
                   ) : (
                     allBorrows.map((b) => {
@@ -300,29 +323,56 @@ function AdminDashboard({ user, onLogout }) {
                         : 0;
                       const isOverdue = !b.returned && days > 7;
                       return (
-                        <tr key={b.id} className="hover:bg-amber-50 transition-colors">
-                          <td className="px-4 py-3 text-sm text-gray-800">{b.student?.name || '—'}</td>
-                          <td className="px-4 py-3 text-sm text-gray-800">{b.book?.title || '—'}</td>
-                          <td className="px-4 py-3 text-sm text-gray-600">
+                        <tr key={b.id} className="hover:bg-amber-50/50 transition-colors">
+                          <td className="px-4 py-3.5 text-sm font-semibold text-gray-900">
+                            {b.student?.name || '—'}
+                            {b.student?.usn && <span className="ml-1.5 px-1.5 py-0.5 text-[10px] bg-amber-100 text-amber-900 rounded font-mono font-bold">{b.student.usn}</span>}
+                          </td>
+                          <td className="px-4 py-3.5 text-sm text-gray-800 font-medium">{b.book?.title || '—'}</td>
+                          <td className="px-4 py-3.5 text-xs text-gray-600">
                             {b.borrowDate ? new Date(b.borrowDate).toLocaleDateString() : '—'}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-600">
+                          <td className="px-4 py-3.5 text-xs text-gray-600">
                             {b.returned && b.returnDate ? new Date(b.returnDate).toLocaleDateString() : '—'}
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-4 py-3.5 text-xs">
                             {b.returned ? (
-                              <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Returned</span>
+                              <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">✓ Returned</span>
                             ) : isOverdue ? (
-                              <span className="px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">Overdue ({days}d)</span>
+                              <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800">⚠️ Overdue ({days}d)</span>
                             ) : (
-                              <span className="px-2 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Active</span>
+                              <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900">Active</span>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-sm font-medium">
+                          <td className="px-4 py-3.5 text-sm font-bold">
                             {b.fine > 0 ? (
-                              <span className="text-red-600">₹{b.fine.toFixed(0)}</span>
+                              <span className={b.finePaid ? "text-emerald-700 font-extrabold" : "text-rose-700 font-extrabold"}>
+                                ₹{b.fine.toFixed(0)}
+                              </span>
                             ) : (
-                              <span className="text-gray-400">—</span>
+                              <span className="text-gray-400 font-medium">₹0</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3.5 text-xs">
+                            {b.fine === 0 ? (
+                              <span className="text-gray-400 font-medium">No Fine</span>
+                            ) : b.finePaid ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 text-xs">
+                                ✓ Paid & Cleared {b.finePaidDate ? `(${new Date(b.finePaidDate).toLocaleDateString()})` : ''}
+                              </span>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-bold bg-rose-100 text-rose-800 text-xs">
+                                  ⚠️ Due at Counter
+                                </span>
+                                <button
+                                  onClick={() => handleSettleFine(b.id)}
+                                  disabled={loading}
+                                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1 rounded-lg text-xs transition-all shadow-xs disabled:opacity-50"
+                                >
+                                  ✓ Mark Paid
+                                </button>
+                              </div>
                             )}
                           </td>
                         </tr>

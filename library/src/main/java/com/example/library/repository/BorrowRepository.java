@@ -31,8 +31,11 @@ public interface BorrowRepository extends JpaRepository<Borrow, Long> {
     @Query("SELECT COUNT(b) FROM Borrow b WHERE b.returned = false")
     long countActiveBorrows();
 
-    @Query("SELECT COALESCE(SUM(b.fine), 0) FROM Borrow b WHERE b.returned = true")
+    @Query("SELECT COALESCE(SUM(b.fine), 0) FROM Borrow b WHERE b.returned = true AND b.finePaid = true")
     double sumFinesCollected();
+
+    @Query("SELECT COALESCE(SUM(b.fine), 0) FROM Borrow b WHERE b.returned = true AND b.finePaid = false AND b.fine > 0")
+    double sumPendingFines();
 
     @Modifying
     @Transactional

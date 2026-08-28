@@ -45,4 +45,10 @@ public class BorrowController {
         List<Borrow> borrows = service.getAllBorrows();
         return ResponseEntity.ok(borrows);
     }
+
+    @PostMapping("/settle-fine/{borrowId}")
+    public ResponseEntity<Borrow> settleFine(@PathVariable Long borrowId) {
+        Borrow borrow = service.settleFineEntity(borrowId);
+        return ResponseEntity.ok(borrow);
+    }
 }

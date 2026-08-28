@@ -88,6 +88,10 @@ public class BorrowService {
         }
 
         borrow.setFine(fine);
+        borrow.setFinePaid(fine == 0);
+        if (fine == 0) {
+            borrow.setFinePaidDate(today);
+        }
         borrow.setReturned(true);
         borrow.setReturnDate(today);
 
@@ -97,6 +101,29 @@ public class BorrowService {
             bookRepo.save(book);
         }
 
+        return borrowRepo.save(borrow);
+    }
+
+    @Transactional
+    public Borrow settleFineEntity(Long borrowId) {
+        if (borrowId == null) {
+            throw new BadRequestException("Borrow ID is required");
+        }
+        Borrow borrow = borrowRepo.findById(borrowId)
+                .orElseThrow(() -> new ResourceNotFoundException("Borrow record not found with ID: " + borrowId));
+
+        if (!borrow.isReturned()) {
+            throw new BadRequestException("Book must be returned before fine can be settled.");
+        }
+        if (borrow.getFine() <= 0) {
+            throw new BadRequestException("No fine is due for this record.");
+        }
+        if (borrow.isFinePaid()) {
+            throw new BadRequestException("Fine has already been marked as paid.");
+        }
+
+        borrow.setFinePaid(true);
+        borrow.setFinePaidDate(LocalDate.now());
         return borrowRepo.save(borrow);
     }
 

@@ -2,8 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import BookList from './BookList';
 import ChangePasswordModal from './ChangePasswordModal';
 import Toast from './Toast';
-
-const API_BASE = 'http://localhost:8080';
+import { API_BASE } from '../config';
 
 function StudentDashboard({ user, onLogout }) {
   const [books, setBooks] = useState([]);
@@ -79,9 +78,9 @@ function StudentDashboard({ user, onLogout }) {
       await fetchBooks();
       await fetchBorrows();
       if (returnedBorrow.fine > 0) {
-        showToast(`Book returned! Fine charged: ₹${returnedBorrow.fine.toFixed(0)}`, 'warning');
+        showToast(`Book returned! Fine of ₹${returnedBorrow.fine.toFixed(0)} charged. Please settle at the library desk.`, 'warning');
       } else {
-        showToast('Book returned successfully!', 'success');
+        showToast('Book returned successfully on time!', 'success');
       }
     } catch (error) {
       showToast(error.message, 'error');
