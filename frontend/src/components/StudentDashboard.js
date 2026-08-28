@@ -89,6 +89,26 @@ function StudentDashboard({ user, onLogout }) {
     }
   };
 
+  const handleRenew = async (borrowId) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE}/borrow/renew/${borrowId}`, {
+        method: 'POST',
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => null);
+        throw new Error((err && err.message) || 'Failed to renew book');
+      }
+      await fetchBooks();
+      await fetchBorrows();
+      showToast('Book renewed successfully! Loan extended by +7 days.', 'success');
+    } catch (error) {
+      showToast(error.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const activeBorrows = borrows.filter((b) => !b.returned);
 
   return (
@@ -205,13 +225,23 @@ function StudentDashboard({ user, onLogout }) {
                           )}
                         </td>
                         <td className="px-4 py-3.5 text-xs">
-                          <button
-                            onClick={() => handleReturn(borrow.id)}
-                            disabled={loading}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-lg shadow-sm hover:shadow transition-all disabled:opacity-50 text-xs"
-                          >
-                            Return Book
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleRenew(borrow.id)}
+                              disabled={loading || isOverdue || (borrow.renewalCount >= 2)}
+                              className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg shadow-xs hover:shadow transition-all disabled:opacity-40 text-xs"
+                              title={isOverdue ? "Cannot renew overdue book" : borrow.renewalCount >= 2 ? "Maximum 2 renewals reached" : "Extend loan by 7 days"}
+                            >
+                              🔄 Renew {borrow.renewalCount > 0 ? `(${borrow.renewalCount}/2)` : ''}
+                            </button>
+                            <button
+                              onClick={() => handleReturn(borrow.id)}
+                              disabled={loading}
+                              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-lg shadow-xs hover:shadow transition-all disabled:opacity-50 text-xs"
+                            >
+                              Return
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );

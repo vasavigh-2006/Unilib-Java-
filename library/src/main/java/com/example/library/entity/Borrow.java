@@ -22,6 +22,7 @@ public class Borrow {
     private double fine;
     private Boolean finePaid = false;
     private LocalDate finePaidDate;
+    private int renewalCount = 0;
 
     // GETTERS
     public Long getId() { return id; }
@@ -33,6 +34,7 @@ public class Borrow {
     public double getFine() { return fine; }
     public boolean isFinePaid() { return finePaid != null && finePaid; }
     public LocalDate getFinePaidDate() { return finePaidDate; }
+    public int getRenewalCount() { return renewalCount; }
 
     // SETTERS
     public void setId(Long id) { this.id = id; }
@@ -44,4 +46,5 @@ public class Borrow {
     public void setFine(double fine) { this.fine = fine; }
     public void setFinePaid(boolean finePaid) { this.finePaid = finePaid; }
     public void setFinePaidDate(LocalDate finePaidDate) { this.finePaidDate = finePaidDate; }
+    public void setRenewalCount(int renewalCount) { this.renewalCount = renewalCount; }
 }

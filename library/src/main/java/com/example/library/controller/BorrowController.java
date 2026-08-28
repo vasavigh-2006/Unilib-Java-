@@ -51,4 +51,10 @@ public class BorrowController {
         Borrow borrow = service.settleFineEntity(borrowId);
         return ResponseEntity.ok(borrow);
     }
+
+    @PostMapping("/renew/{borrowId}")
+    public ResponseEntity<Borrow> renew(@PathVariable Long borrowId) {
+        Borrow borrow = service.renewBookEntity(borrowId);
+        return ResponseEntity.ok(borrow);
+    }
 }

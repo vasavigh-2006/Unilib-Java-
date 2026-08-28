@@ -128,6 +128,33 @@ public class BorrowService {
         return borrowRepo.save(borrow);
     }
 
+    @Transactional
+    public Borrow renewBookEntity(Long borrowId) {
+        if (borrowId == null) {
+            throw new BadRequestException("Borrow ID is required");
+        }
+        Borrow borrow = borrowRepo.findById(borrowId)
+                .orElseThrow(() -> new ResourceNotFoundException("Borrow record not found with ID: " + borrowId));
+
+        if (borrow.isReturned()) {
+            throw new BadRequestException("Cannot renew a book that has already been returned.");
+        }
+
+        LocalDate today = LocalDate.now();
+        long days = ChronoUnit.DAYS.between(borrow.getBorrowDate(), today);
+        if (days > 7) {
+            throw new BadRequestException("Cannot renew an overdue book (" + (days - 7) + " days late). Please return the book and settle any overdue fees at the counter.");
+        }
+
+        if (borrow.getRenewalCount() >= 2) {
+            throw new BadRequestException("Maximum renewal limit (2 renewals) reached for this book. Please return it so other students may borrow.");
+        }
+
+        borrow.setBorrowDate(today);
+        borrow.setRenewalCount(borrow.getRenewalCount() + 1);
+        return borrowRepo.save(borrow);
+    }
+
     @Transactional(readOnly = true)
     public List<Borrow> getBorrowsByStudentIdEntity(Long studentId) {
         if (studentId == null) {

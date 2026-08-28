@@ -336,13 +336,20 @@ function AdminDashboard({ user, onLogout }) {
                             {b.returned && b.returnDate ? new Date(b.returnDate).toLocaleDateString() : '—'}
                           </td>
                           <td className="px-4 py-3.5 text-xs">
-                            {b.returned ? (
-                              <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">✓ Returned</span>
-                            ) : isOverdue ? (
-                              <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800">⚠️ Overdue ({days}d)</span>
-                            ) : (
-                              <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900">Active</span>
-                            )}
+                            <div className="flex flex-col gap-1 items-start">
+                              {b.returned ? (
+                                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">✓ Returned</span>
+                              ) : isOverdue ? (
+                                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800">⚠️ Overdue ({days}d)</span>
+                              ) : (
+                                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900">Active</span>
+                              )}
+                              {b.renewalCount > 0 && (
+                                <span className="text-[10px] font-semibold text-amber-800 bg-amber-100/70 px-1.5 py-0.5 rounded">
+                                  🔄 Renewed ({b.renewalCount}x)
+                                </span>
+                              )}
+                            </div>
                           </td>
                           <td className="px-4 py-3.5 text-sm font-bold">
                             {b.fine > 0 ? (
