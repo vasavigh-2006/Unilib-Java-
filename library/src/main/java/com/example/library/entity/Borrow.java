@@ -20,7 +20,7 @@ public class Borrow {
     private LocalDate returnDate;
     private boolean returned;
     private double fine;
-    private Boolean finePaid;
+    private Boolean finePaid = false;
     private LocalDate finePaidDate;
 
     // GETTERS

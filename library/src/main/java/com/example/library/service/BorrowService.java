@@ -61,6 +61,7 @@ public class BorrowService {
         borrow.setBorrowDate(LocalDate.now());
         borrow.setReturned(false);
         borrow.setFine(0);
+        borrow.setFinePaid(false);
 
         return borrowRepo.save(borrow);
     }
