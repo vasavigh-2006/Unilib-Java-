@@ -56,6 +56,9 @@ public class AuthController {
             if (s.getName() == null || s.getName().trim().isEmpty()) {
                 s.setName(username);
             }
+            if (s.getUsn() == null || s.getUsn().trim().isEmpty()) {
+                s.setUsn(username);
+            }
             studentRepo.save(s);
             user.setStudent(s);
         }

@@ -12,6 +12,7 @@ public class Student {
     private String name;
     private String email;
     private String usn;
+    private String cardNumber;
     private String department;
     private String section;
 
@@ -32,6 +33,9 @@ public class Student {
 
     public String getUsn() { return usn; }
     public void setUsn(String usn) { this.usn = usn; }
+
+    public String getCardNumber() { return cardNumber; }
+    public void setCardNumber(String cardNumber) { this.cardNumber = cardNumber; }
 
     public String getDepartment() { return department; }
     public void setDepartment(String department) { this.department = department; }

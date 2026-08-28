@@ -31,29 +31,36 @@ function Login({ onLogin, loading }) {
             </div>
           )}
 
+          <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl p-3 text-xs text-amber-900 flex items-start gap-2">
+            <span className="text-base">🎓</span>
+            <div>
+              <strong>Students:</strong> Sign in with your <strong>USN</strong> as Username and <strong>Library Card No</strong> as Password.
+            </div>
+          </div>
+
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-              Username
+            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+              Username / USN
             </label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all text-sm"
+              placeholder="e.g. 1BM24CS387 or admin"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all text-sm uppercase font-medium"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-              Password
+            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+              Password / Library Card No
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="Enter library card no or password"
               className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all text-sm"
               required
             />
@@ -69,7 +76,7 @@ function Login({ onLogin, loading }) {
 
           <div className="text-center pt-2 border-t border-gray-100">
             <p className="text-xs text-gray-400">
-              Need access? Contact the university library administrator.
+              Need access? Contact the university library circulation desk.
             </p>
           </div>
         </form>
