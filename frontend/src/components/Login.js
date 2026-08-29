@@ -9,7 +9,9 @@ function Login({ onLogin, loading }) {
     e.preventDefault();
     setLoginError('');
     try {
-      await onLogin(username, password);
+      const trimmed = username.trim();
+      const normalizedUsername = trimmed.toLowerCase() === 'admin' ? 'admin' : trimmed.toUpperCase();
+      await onLogin(normalizedUsername, password);
     } catch (error) {
       setLoginError(error.message || 'Invalid username or password');
     }
