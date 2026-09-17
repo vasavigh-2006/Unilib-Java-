@@ -7,7 +7,8 @@ A clean, modern University Library Management System built with **React**, **Spr
 ## 🌐 Live Application
 
 - **Frontend:** [https://unilib-java.vercel.app/](https://unilib-java.vercel.app/)
-- **Backend API:** [https://unilib-java-production.up.railway.app](https://unilib-java-production.up.railway.app)
+- **Backend API:** [https://unilib-backend-6ro0.onrender.com](https://unilib-backend-6ro0.onrender.com)
+- **Cloud Database:** TiDB Cloud MySQL (Permanent Free Tier)
 
 ---
 
